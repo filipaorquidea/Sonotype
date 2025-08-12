@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<title>Sonotype</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Sonotype - Interactive Jazz Typography">
+  <meta name="keywords" content="jazz, typography, interactive, p5.js, opentype.js, CCapture, GIF">
+
+  <!-- Suprimir erros de source maps -->
+  <script>
+    // Interceptar e ignorar erros de carregamento de source maps
+    const originalErrorHandler = window.onerror;
+    window.onerror = function (msg, url, lineNo, columnNo, error) {
+      // Verificar se é um erro de source map
+      if (msg.includes('Failed to load resource') &&
+        (url.endsWith('.map') || url.includes('.map?'))) {
+        // Ignorar silenciosamente erros de source map
+        console.debug('Source map não encontrado (ignorado):', url);
+        return true;
+      }
+      // Passar para o handler original para outros erros
+      return originalErrorHandler ? originalErrorHandler(msg, url, lineNo, columnNo, error) : false;
+    };
+  </script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.11.1/p5.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.11.1/addons/p5.sound.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/opentype.js@latest/dist/opentype.min.js"></script>
+  <script src="lib/CCapture.all.min.js"></script>
+  <script src="lib/gif.js"></script>
+  <script src="lib/gif.worker.js"></script>
+
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <meta charset="utf-8" />
+
+</head>
+
+<body>
+  <main>
+  </main>
+  <script src="class.js"></script>
+  <script src="audio.js"></script>
+  <script src="animations.js"></script>
+  <script src="letters.js"></script>
+  <script src="textarea.js"></script>
+  <script src="export.js"></script>
+  <script src="main.js"></script>
+</body>
+
+</html>
