@@ -1,4 +1,3 @@
-
 if (typeof window !== 'undefined') {
     if (!window.letterPoints) window.letterPoints = [];
 } else {
@@ -500,7 +499,6 @@ function drawLetterPointsGrid() {
   // Parâmetros visuais
   const baseHue = 0;
   const baseSaturation = 0;
-  const baseOpacity = 80;
   const baseBrightness = darkMode ? 0 : 255;
   const minBrightness = darkMode ? 15 : 40;
   const maxBrightness = darkMode ? 0 : 255;
@@ -536,11 +534,8 @@ function drawLetterPointsGrid() {
         const avgAudio = (amplifiedBass + amplifiedMid + amplifiedTreble) / 3;
         const pointSize = (p.size || 3) * (1 + avgAudio * 1.5);
 
-        // Cor responsiva
-        const brightness = map(amplifiedTreble, 0, 1, minBrightness, maxBrightness);
-        const alpha = 70 + avgAudio * 30;
-
-        fill(baseHue, baseSaturation, brightness, alpha);
+        // Cor fixa (preto ou branco)
+        fill(darkMode ? 0 : 255);
         noStroke();
         ellipse(posX, posY, pointSize, pointSize);
         break;
@@ -559,13 +554,8 @@ function drawLetterPointsGrid() {
         const pulseSizeMultiplier = 1 + pulsationBase * bassResponse * 1.2; // AUMENTADO: Pulsação mais visível
         const pulseSize = baseSize * sizeMultiplier * pulseSizeMultiplier;
 
-        // Cores que respondem ao bass - REDUZIDO
-        const bassBrightness = map(amplifiedBass, 0, 1, minBrightness + 20, maxBrightness); // REDUZIDO
-        const bassAlpha = 70 + amplifiedBass * 50; // REDUZIDO: Opacidade normal
 
-        fill(baseHue, baseSaturation, bassBrightness, bassAlpha);
-        noStroke();
-
+ 
         // MOVIMENTO CIRCULAR SINCRONIZADO para todas as partículas
         const globalCircularAngle = millis() * 0.002; // ângulo global para todas as partículas
         const circularRadius = 8; // raio do movimento circular
@@ -620,11 +610,9 @@ function drawLetterPointsGrid() {
           }
         }
         
-        // Visual: opacidade e tamanho baseados no som
-        const opacity = amplifiedMid > 0.1 ? 40 + amplifiedMid * 50 : 30;
         const size = amplifiedMid > 0.1 ? 3 + amplifiedMid * 3 : 2;
         
-        fill(0, 0, maxBrightness, opacity);
+        fill(darkMode ? 0 : 255);
         noStroke();
         ellipse(p.pos.x, p.pos.y, size, size);
         break;
@@ -673,7 +661,7 @@ function drawLetterPointsGrid() {
           const waveIntensity = Math.abs(waveAmplitude) / 40;
           const opacity = 40 + waveIntensity * 50;
           
-          fill(0, 0, maxBrightness, opacity);
+          fill(darkMode ? 0 : 255);
           noStroke();
           ellipse(p.pos.x, p.pos.y, 3 + waveIntensity * 4, 3 + waveIntensity * 4);
 
@@ -704,8 +692,6 @@ function drawLetterPointsGrid() {
           const x2 = centerX - cos(angle) * finalLength;
           const y2 = centerY - sin(angle) * finalLength;
 
-          // Propriedades visuais
-          const opacity = 40 + amplifiedTreble * 50;
           let strokeW = 0.8 + amplifiedTreble * 3;
 
           // Resposta ao spectrum
@@ -714,14 +700,14 @@ function drawLetterPointsGrid() {
             strokeW *= (1 + freqValue * 2);
           }
 
-          stroke(darkMode ? 255 : 0, 0, opacity);
+          stroke(darkMode ? 0 : 255);
           strokeWeight(strokeW);
           line(x1, y1, x2, y2);
 
           // Efeito glow para picos
           if (peakDetector.peakCount > 0 && amplifiedTreble > 0.5) {
             strokeWeight(strokeW * 2);
-            stroke(darkMode ? 255 : 0, 0, opacity * 0.3);
+            stroke(darkMode ? 0 : 255);
             line(x1, y1, x2, y2);
           }
         }
@@ -747,11 +733,10 @@ function drawLetterPointsGrid() {
 
           // Propriedades visuais
           const combinedAudio = (amplifiedBass + amplifiedMid + amplifiedTreble) / 3;
-          const orgBrightness = map(combinedAudio, 0, 1, minBrightness, maxBrightness);
           const orgAlpha = 50 + combinedAudio * 40;
           const orgSize = (p.size || 3) * (1 + combinedAudio * 2.5);
 
-          fill(baseHue, baseSaturation, orgBrightness, orgAlpha);
+          fill(darkMode ? 0 : 255);
 
           // Stroke para picos de áudio
           if (amplifiedMic > 0.6) {
