@@ -337,7 +337,7 @@ function createGridLetterSingle(char, charIndex, startX, yBase, graphicsBuffer, 
   // startX é a posição onde a letra deve começar, não o centro
   let letterCenterX = startX + (letterWidth / 2);
 
-  let gridDensity = 12; // densidade alta, quadrados pequenos
+  let gridDensity = 15; // densidade alta, quadrados pequenos
   // Calcular número de células baseado na área da letra
   let letterArea = letterWidth * letterHeight;
   let targetCellArea = letterArea / (gridDensity * gridDensity);
