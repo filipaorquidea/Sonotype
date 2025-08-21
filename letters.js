@@ -129,7 +129,9 @@ function createVectorLetterSingle(char, charIndex, startX, yBase, nextChar = nul
     }
   });
 
-  let gridSize = particleDensity;
+  // Inverter sentido: para a direita aumenta densidade (diminui gridSize)
+  let maxSlider = 20, minSlider = 5;
+  let gridSize = maxSlider + minSlider - particleDensity;
   // Calcular a posição central da letra corretamente
   // startX é a posição onde a letra deve começar, não o centro
   let letterCenterX = startX + (letterWidth / 2);
@@ -331,7 +333,9 @@ function createGridLetterSingle(char, charIndex, startX, yBase, graphicsBuffer, 
   // startX é a posição onde a letra deve começar, não o centro
   let letterCenterX = startX + (letterWidth / 2);
 
-  let gridDensity = 15; // densidade alta, quadrados pequenos
+  // Usar gridDensity global se existir, senão valor padrão
+  let gridDensity = typeof window !== 'undefined' && window.gridDensity ? window.gridDensity : 15;
+  // Inverter sentido: slider para a direita aumenta densidade
   // Calcular número de células baseado na área da letra
   let letterArea = letterWidth * letterHeight;
   let targetCellArea = letterArea / (gridDensity * gridDensity);

@@ -1174,7 +1174,10 @@ function setupParticleControls() {
   particleDensityLabel.style('color', darkMode ? '#000000' : '#FFFFFF');
 
   // Slider densidade
-  particleDensitySlider = createSlider(5, 20, particleDensity, 1);
+  const minSlider = 5, maxSlider = 20;
+  const defaultSlider = Math.round((minSlider + maxSlider) / 2 + 1);
+  particleDensitySlider = createSlider(minSlider, maxSlider, defaultSlider, 1);
+  particleDensity = defaultSlider;
   particleDensitySlider.style('appearance', 'none');
   particleDensitySlider.style('-webkit-appearance', 'none');
   particleDensitySlider.style('height', '5px');
@@ -1184,7 +1187,8 @@ function setupParticleControls() {
   particleDensitySlider.style('opacity', '0.9');
 
   particleDensitySlider.input(() => {
-    particleDensity = particleDensitySlider.value();
+  particleDensity = particleDensitySlider.value();
+  window.gridDensity = particleDensity;
     particleDensityLabel.html('Particle Density');
     createMixedLetterPoints();
   });
