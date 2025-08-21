@@ -724,12 +724,14 @@ function updateSegmentControlsLayout() {
         const labelElement = checkbox.elt.querySelector('label');
         
         if (checkboxElement) {
-          checkboxElement.style.borderColor = darkMode ? 'rgba(0, 0, 0, 0.6)' : 'rgba(255, 255, 255, 0.6)';
-          checkboxElement.style.backgroundColor = 'transparent';
-          
+          checkboxElement.style.borderColor = 'rgba(0, 0, 0, 0.6)';
+          checkboxElement.style.backgroundColor = 'rgba(255, 255, 255, 0.9)';
+          checkboxElement.style.accentColor = '#000000';
           if (checkboxElement.checked) {
-            checkboxElement.style.backgroundColor = darkMode ? 'rgba(0, 0, 0, 0.8)' : 'rgba(255, 255, 255, 0.8)';
-            checkboxElement.style.borderColor = darkMode ? 'rgba(0, 0, 0, 0.9)' : 'rgba(255, 255, 255, 0.9)';
+            checkboxElement.style.backgroundColor = 'rgba(255, 255, 255, 1)';
+            checkboxElement.style.borderColor = 'rgba(0, 0, 0, 0.9)';
+            checkboxElement.style.boxShadow = '0 0 0 2px rgba(0,0,0,0.12)';
+            checkboxElement.style.accentColor = '#000000';
           }
         }
         
@@ -1540,11 +1542,11 @@ function informations() {
   infoBox.id('info-box');
   infoBox.position(width / 2 - 360, height / 2 - 240);
   infoBox.size(700, 460);
-  infoBox.style('background', darkMode ? 'rgba(0,0,0,0.85)' : 'rgba(255,255,255,0.55)');
+  infoBox.style('background', darkMode ? 'rgba(0,0,0,0.85)' : 'rgba(255,255,255,0.85)');
   infoBox.style('border-radius', '10px');
   infoBox.style('box-shadow', '0 4px 24px rgba(0,0,0,0.15)');
   infoBox.style('padding', '32px');
-  infoBox.style('color', darkMode ? '#000000' : '#FFFFFF');
+  infoBox.style('color', darkMode ? '#FFFFFF' : '#000000');
   infoBox.style('font-size', '18px');
   infoBox.style('z-index', '1000');
   infoBox.style('display', 'flex');
@@ -1561,7 +1563,7 @@ function informations() {
   closeBtn.style('top', '12px');
   closeBtn.style('right', '18px');
   closeBtn.style('font-size', '28px');
-  closeBtn.style('color', darkMode ? '#000000' : '#FFFFFF');
+  closeBtn.style('color', darkMode ? '#FFFFFF' : '#000000');
   closeBtn.style('cursor', 'pointer');
   closeBtn.style('opacity', '0.7');
   closeBtn.mousePressed(() => { 
