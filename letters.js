@@ -156,7 +156,7 @@ function createVectorLetterSingle(char, charIndex, startX, yBase, nextChar = nul
       if (index >= 0 && index < offscreen.pixels.length && offscreen.pixels[index] > 50) {
   let relX = x - offscreen.width / 2;
   let pixelDistanceFromCanvasBaseline = y - canvasBaselineY;
-  let globalY = anatomy.baseline + pixelDistanceFromCanvasBaseline;
+  let globalY = yBase + pixelDistanceFromCanvasBaseline;
   let globalX = letterCenterX + relX;
 
         // Criar chave única para esta posição
@@ -379,7 +379,7 @@ function createGridLetterSingle(char, charIndex, startX, yBase, graphicsBuffer, 
 
   // Converter para coordenadas globais
   let globalX = letterCenterX + (centerX - offscreen.width / 2);
-  let globalY = anatomy.baseline + (centerY - canvasBaselineY);
+  let globalY = yBase + (centerY - canvasBaselineY);
 
         // Criar caixa
         let box = {
