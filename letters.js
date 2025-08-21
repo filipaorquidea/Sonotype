@@ -78,11 +78,7 @@ function createVectorLetterSingle(char, charIndex, startX, yBase, nextChar = nul
 
   const anatomy = new LetterAnatomy();
 
-  // Calcular anatomia com fontSize ajustado
-  anatomy.capHeight = anatomy.baseline - fontSize * 0.65;
-  anatomy.xHeight = anatomy.baseline - fontSize * 0.5;
-  anatomy.ascender = anatomy.baseline - fontSize * 0.75;
-  anatomy.descender = anatomy.baseline + fontSize * 0.25;
+  // anatomy já tem capHeight, xHeight, ascender, descender calculados corretamente
 
   const charBaseline = anatomy.getCharacterBaseline(char);
   const charTopLine = anatomy.getCharacterTopLine(char);
@@ -97,7 +93,8 @@ function createVectorLetterSingle(char, charIndex, startX, yBase, nextChar = nul
   let canvasWidth = fontSize * 1.4;
   let totalTypographicHeight = Math.abs(anatomy.ascender - anatomy.descender);
   let canvasHeight = totalTypographicHeight * 1.2;
-  let canvasBaselineY = Math.abs(anatomy.ascender - anatomy.baseline) + (totalTypographicHeight * 0.1);
+  // baseline local do canvas offscreen deve coincidir com a baseline global
+  let canvasBaselineY = canvasHeight * 0.8;
 
   let offscreen = createGraphics(int(canvasWidth), int(canvasHeight));
   offscreen.background(0);
@@ -155,10 +152,10 @@ function createVectorLetterSingle(char, charIndex, startX, yBase, nextChar = nul
       let index = (x + y * offscreen.width) * 4;
 
       if (index >= 0 && index < offscreen.pixels.length && offscreen.pixels[index] > 50) {
-        let relX = x - offscreen.width / 2;
-        let pixelDistanceFromCanvasBaseline = y - canvasBaselineY;
-        let globalY = charBaseline + pixelDistanceFromCanvasBaseline + (yBase || 0);
-        let globalX = letterCenterX + relX;
+  let relX = x - offscreen.width / 2;
+  let pixelDistanceFromCanvasBaseline = y - canvasBaselineY;
+  let globalY = anatomy.baseline + pixelDistanceFromCanvasBaseline;
+  let globalX = letterCenterX + relX;
 
         // Criar chave única para esta posição
         let posKey = `${Math.round(globalX)},${Math.round(globalY)}`;
@@ -274,11 +271,7 @@ function createGridLetterSingle(char, charIndex, startX, yBase, graphicsBuffer, 
 
   const anatomy = new LetterAnatomy();
 
-  // Calcular anatomia com fontSize ajustado (igual à função vetorial)
-  anatomy.capHeight = anatomy.baseline - fontSize * 0.7;
-  anatomy.xHeight = anatomy.baseline - fontSize * 0.5;
-  anatomy.ascender = anatomy.baseline - fontSize * 0.75;
-  anatomy.descender = anatomy.baseline + fontSize * 0.25;
+  // anatomy já tem capHeight, xHeight, ascender, descender calculados corretamente
 
   const charBaseline = anatomy.getCharacterBaseline(char);
   const charTopLine = anatomy.getCharacterTopLine(char);
@@ -293,7 +286,8 @@ function createGridLetterSingle(char, charIndex, startX, yBase, graphicsBuffer, 
   let canvasWidth = fontSize * 1.4;
   let totalTypographicHeight = Math.abs(anatomy.ascender - anatomy.descender);
   let canvasHeight = totalTypographicHeight * 1.2;
-  let canvasBaselineY = Math.abs(anatomy.ascender - anatomy.baseline) + (totalTypographicHeight * 0.1);
+  // baseline local do canvas offscreen deve coincidir com a baseline global
+  let canvasBaselineY = canvasHeight * 0.8;
 
   // Parâmetros da grelha - ajustados para evitar sobreposições
   const gridCellSize = fontSize / 15; // Reduzido de 15 para 12 para células menores
@@ -379,9 +373,9 @@ function createGridLetterSingle(char, charIndex, startX, yBase, graphicsBuffer, 
         let centerX = minX + (cellX + 0.5) * adjustedCellSizeX;
         let centerY = minY + (cellY + 0.5) * adjustedCellSizeY;
 
-        // Converter para coordenadas globais
-        let globalX = letterCenterX + (centerX - offscreen.width / 2);
-        let globalY = charBaseline + (centerY - canvasBaselineY) + (yBase || 0);
+  // Converter para coordenadas globais
+  let globalX = letterCenterX + (centerX - offscreen.width / 2);
+  let globalY = anatomy.baseline + (centerY - canvasBaselineY);
 
         // Criar caixa
         let box = {
