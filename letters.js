@@ -740,16 +740,10 @@ function drawLetterPointsGrid() {
 
           // Stroke para picos de áudio
           if (amplifiedMic > 0.6) {
-            stroke(baseHue, baseSaturation, min(orgBrightness + 30, maxBrightness));
+            stroke(darkMode ? 0 : 30);
             strokeWeight(0.3 + amplifiedMic * 0.7);
           } else {
             noStroke();
-          }
-
-          // Glow para energia alta
-          if (combinedAudio > 0.6) {
-            drawingContext.shadowBlur = amplifiedMic * 10;
-            drawingContext.shadowColor = color(baseHue, baseSaturation, orgBrightness);
           }
 
           ellipse(orgX, orgY, orgSize, orgSize);
