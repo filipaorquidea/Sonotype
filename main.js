@@ -1569,12 +1569,13 @@ function informations() {
     infoBox.remove(); 
   });
 
-  let html = `<b>Informações do Sistema Typeface</b>
-  <p>Este sistema é uma exploração de tipografia generativa, onde cada letra é composta por partículas que se comportam de maneira dinâmica e interativa.</p>
-  <p>As partículas são agrupadas em segmentos, cada um com o seu próprio comportamento e animação. É possível alternar a visibilidade dos segmentos, randomizar os seus comportamentos e até
-  interagir com eles usando a câmera.</p>
-  <p>O sistema também permite exportar as fontes em diferentes formatos, como OTF, GIF e vídeo.</p>
-  <p>Use os controles na parte inferior para ajustar a densidade das partículas, ativar/desativar modos de instalação e exibição, e alternar entre modos de exibição.</p>
+  let html = `<b>Informações do Sistema Sonotype</b>
+  <p>Este sistema é uma exploração de tipografia, onde cada letra é composta por partículas que se comportam de maneira dinâmica e interativa.</p>
+  <p>Existem 2 fontes distintas que irão ser demonstradas à medida que for escrevendo, também existem botões e outras interações disponíveis.</p>
+  <p>Pode aumentar ou diminuir o número de partículas na fontes, dar shuffle na posição de animações, remover alguma animação das letras, congelar o estado atual,
+  ver valores de áudio e as linhas de anatomia da letra e ainda exportar em diferentes formatos.</p>
+  <p> Existe ainda um modo de exibição para usar em instalações interativas.</p>
+  <p>Explore o que este sistema tem para oferecer!</p>
   `;
   infoBox.html(html);
   // Garante que o botão de fechar fica acima do conteúdo

@@ -23,8 +23,6 @@ function updateText() {
   // Antes de limpar, guardar mapeamentos existentes
   const preservedSegments = new Map();
 
-
-
   // Limpar todos os mapeamentos
   window.activeLetterSegments.clear();
 
