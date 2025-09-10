@@ -1,7 +1,7 @@
 const PLACEHOLDER_TEXT = "J";
 const ABS_MIN_FONT_SIZE = 250;
 const ABS_MAX_FONT_SIZE = 500;
-const LINE_SPACING = 1.2; // espaçamento entre linhas mais amplo para evitar sobreposição
+const LINE_SPACING = 1.05; // espaçamento entre linhas mais compacto
 let customText = "";
 let cursorPosition = 0;
 let selectionStart = null;
@@ -22,6 +22,8 @@ function updateText() {
 
   // Antes de limpar, guardar mapeamentos existentes
   const preservedSegments = new Map();
+
+
 
   // Limpar todos os mapeamentos
   window.activeLetterSegments.clear();
@@ -218,9 +220,9 @@ function createPlaceholderLetterPoints() {
   const descent = textDescent();
   const charHeight = ascent + descent;
   
-  // Centralizar horizontalmente e verticalmente pela baseline
+  // Centralizar horizontalmente e verticalmente
   const startX = centerX - charWidth / 2;
-  const startY = centerY + ascent / 2;
+  const startY = centerY - charHeight / 2 - BASELINE; // Centralizar sem ajuste de baseline
   
   // Criar partículas para o "J" placeholder
   const charIndex = 0;
@@ -253,10 +255,8 @@ function createMixedLetterPoints() {
   }
   
   const lines = wrapTextToWidth(customText, availableWidth, fontSz, window.font);
-  // Centralizar verticalmente o bloco de texto
-  const totalTextHeight = lines.length * fontSz * LINE_SPACING;
-  const verticalOffset = fontSz * 0.3;
-  const startY = (TEXTAREA_HEIGHT - totalTextHeight) / 2 + ascent + verticalOffset;
+  // Primeira linha fixa no topo
+  const startY = TEXT_PADDING + ascent;
   for (let l = 0; l < lines.length; l++) {
     let line = lines[l];
     let cutLine = line;
@@ -268,8 +268,8 @@ function createMixedLetterPoints() {
     let lineWidth = textWidth(cutLine);
     let startX = TEXT_PADDING + (availableWidth - lineWidth) / 2;
     let currentX = startX;
-    // Linhas crescem para baixo
-    let y = startY + l * fontSz * LINE_SPACING;
+    // Linhas crescem para cima
+    let y = startY - (lines.length - 1 - l) * fontSz * LINE_SPACING;
     for (let i = 0; i < cutLine.length; i++) {
       let char = cutLine[i];
       let nextChar = i < cutLine.length - 1 ? cutLine[i + 1] : null;
@@ -284,9 +284,9 @@ function createMixedLetterPoints() {
         continue;
       }
       if ((i + l) % 2 === 0) {
-        currentX = createVectorLetterSingle(char, charIndex, currentX, y, nextChar);
+        currentX = createVectorLetterSingle(char, charIndex, currentX, y - fontSz, nextChar);
       } else {
-        currentX = createGridLetterSingle(char, charIndex, currentX, y, null, nextChar);
+        currentX = createGridLetterSingle(char, charIndex, currentX, y - fontSz, null, nextChar);
       }
       // Não sobrescrever currentX com nextX - deixar as funções de criação de letras
       // retornarem a posição correta com kerning aplicado

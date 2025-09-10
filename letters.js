@@ -1,3 +1,4 @@
+
 if (typeof window !== 'undefined') {
     if (!window.letterPoints) window.letterPoints = [];
 } else {
@@ -78,7 +79,11 @@ function createVectorLetterSingle(char, charIndex, startX, yBase, nextChar = nul
 
   const anatomy = new LetterAnatomy();
 
-  // anatomy já tem capHeight, xHeight, ascender, descender calculados corretamente
+  // Calcular anatomia com fontSize ajustado
+  anatomy.capHeight = anatomy.baseline - fontSize * 0.65;
+  anatomy.xHeight = anatomy.baseline - fontSize * 0.5;
+  anatomy.ascender = anatomy.baseline - fontSize * 0.75;
+  anatomy.descender = anatomy.baseline + fontSize * 0.25;
 
   const charBaseline = anatomy.getCharacterBaseline(char);
   const charTopLine = anatomy.getCharacterTopLine(char);
@@ -93,8 +98,7 @@ function createVectorLetterSingle(char, charIndex, startX, yBase, nextChar = nul
   let canvasWidth = fontSize * 1.4;
   let totalTypographicHeight = Math.abs(anatomy.ascender - anatomy.descender);
   let canvasHeight = totalTypographicHeight * 1.2;
-  // baseline local do canvas offscreen deve coincidir com a baseline global
-  let canvasBaselineY = canvasHeight * 0.8;
+  let canvasBaselineY = Math.abs(anatomy.ascender - anatomy.baseline) + (totalTypographicHeight * 0.1);
 
   let offscreen = createGraphics(int(canvasWidth), int(canvasHeight));
   offscreen.background(0);
@@ -129,9 +133,7 @@ function createVectorLetterSingle(char, charIndex, startX, yBase, nextChar = nul
     }
   });
 
-  // Inverter sentido: para a direita aumenta densidade (diminui gridSize)
-  let maxSlider = 20, minSlider = 5;
-  let gridSize = maxSlider + minSlider - particleDensity;
+  let gridSize = particleDensity;
   // Calcular a posição central da letra corretamente
   // startX é a posição onde a letra deve começar, não o centro
   let letterCenterX = startX + (letterWidth / 2);
@@ -154,10 +156,10 @@ function createVectorLetterSingle(char, charIndex, startX, yBase, nextChar = nul
       let index = (x + y * offscreen.width) * 4;
 
       if (index >= 0 && index < offscreen.pixels.length && offscreen.pixels[index] > 50) {
-  let relX = x - offscreen.width / 2;
-  let pixelDistanceFromCanvasBaseline = y - canvasBaselineY;
-  let globalY = yBase + pixelDistanceFromCanvasBaseline;
-  let globalX = letterCenterX + relX;
+        let relX = x - offscreen.width / 2;
+        let pixelDistanceFromCanvasBaseline = y - canvasBaselineY;
+        let globalY = charBaseline + pixelDistanceFromCanvasBaseline + (yBase || 0);
+        let globalX = letterCenterX + relX;
 
         // Criar chave única para esta posição
         let posKey = `${Math.round(globalX)},${Math.round(globalY)}`;
@@ -273,7 +275,11 @@ function createGridLetterSingle(char, charIndex, startX, yBase, graphicsBuffer, 
 
   const anatomy = new LetterAnatomy();
 
-  // anatomy já tem capHeight, xHeight, ascender, descender calculados corretamente
+  // Calcular anatomia com fontSize ajustado (igual à função vetorial)
+  anatomy.capHeight = anatomy.baseline - fontSize * 0.7;
+  anatomy.xHeight = anatomy.baseline - fontSize * 0.5;
+  anatomy.ascender = anatomy.baseline - fontSize * 0.75;
+  anatomy.descender = anatomy.baseline + fontSize * 0.25;
 
   const charBaseline = anatomy.getCharacterBaseline(char);
   const charTopLine = anatomy.getCharacterTopLine(char);
@@ -288,8 +294,7 @@ function createGridLetterSingle(char, charIndex, startX, yBase, graphicsBuffer, 
   let canvasWidth = fontSize * 1.4;
   let totalTypographicHeight = Math.abs(anatomy.ascender - anatomy.descender);
   let canvasHeight = totalTypographicHeight * 1.2;
-  // baseline local do canvas offscreen deve coincidir com a baseline global
-  let canvasBaselineY = canvasHeight * 0.8;
+  let canvasBaselineY = Math.abs(anatomy.ascender - anatomy.baseline) + (totalTypographicHeight * 0.1);
 
   // Parâmetros da grelha - ajustados para evitar sobreposições
   const gridCellSize = fontSize / 15; // Reduzido de 15 para 12 para células menores
@@ -333,9 +338,7 @@ function createGridLetterSingle(char, charIndex, startX, yBase, graphicsBuffer, 
   // startX é a posição onde a letra deve começar, não o centro
   let letterCenterX = startX + (letterWidth / 2);
 
-  // Usar gridDensity global se existir, senão valor padrão
-  let gridDensity = typeof window !== 'undefined' && window.gridDensity ? window.gridDensity : 15;
-  // Inverter sentido: slider para a direita aumenta densidade
+  let gridDensity = 12; // densidade alta, quadrados pequenos
   // Calcular número de células baseado na área da letra
   let letterArea = letterWidth * letterHeight;
   let targetCellArea = letterArea / (gridDensity * gridDensity);
@@ -377,9 +380,9 @@ function createGridLetterSingle(char, charIndex, startX, yBase, graphicsBuffer, 
         let centerX = minX + (cellX + 0.5) * adjustedCellSizeX;
         let centerY = minY + (cellY + 0.5) * adjustedCellSizeY;
 
-  // Converter para coordenadas globais
-  let globalX = letterCenterX + (centerX - offscreen.width / 2);
-  let globalY = yBase + (centerY - canvasBaselineY);
+        // Converter para coordenadas globais
+        let globalX = letterCenterX + (centerX - offscreen.width / 2);
+        let globalY = charBaseline + (centerY - canvasBaselineY) + (yBase || 0);
 
         // Criar caixa
         let box = {
@@ -497,6 +500,7 @@ function drawLetterPointsGrid() {
   // Parâmetros visuais
   const baseHue = 0;
   const baseSaturation = 0;
+  const baseOpacity = 80;
   const baseBrightness = darkMode ? 0 : 255;
   const minBrightness = darkMode ? 15 : 40;
   const maxBrightness = darkMode ? 0 : 255;
@@ -532,8 +536,11 @@ function drawLetterPointsGrid() {
         const avgAudio = (amplifiedBass + amplifiedMid + amplifiedTreble) / 3;
         const pointSize = (p.size || 3) * (1 + avgAudio * 1.5);
 
-        // Cor fixa (preto ou branco)
-        fill(darkMode ? 0 : 255);
+        // Cor responsiva
+        const brightness = map(amplifiedTreble, 0, 1, minBrightness, maxBrightness);
+        const alpha = 70 + avgAudio * 30;
+
+        fill(baseHue, baseSaturation, brightness, alpha);
         noStroke();
         ellipse(posX, posY, pointSize, pointSize);
         break;
@@ -552,8 +559,13 @@ function drawLetterPointsGrid() {
         const pulseSizeMultiplier = 1 + pulsationBase * bassResponse * 1.2; // AUMENTADO: Pulsação mais visível
         const pulseSize = baseSize * sizeMultiplier * pulseSizeMultiplier;
 
+        // Cores que respondem ao bass - REDUZIDO
+        const bassBrightness = map(amplifiedBass, 0, 1, minBrightness + 20, maxBrightness); // REDUZIDO
+        const bassAlpha = 70 + amplifiedBass * 50; // REDUZIDO: Opacidade normal
 
- 
+        fill(baseHue, baseSaturation, bassBrightness, bassAlpha);
+        noStroke();
+
         // MOVIMENTO CIRCULAR SINCRONIZADO para todas as partículas
         const globalCircularAngle = millis() * 0.002; // ângulo global para todas as partículas
         const circularRadius = 8; // raio do movimento circular
@@ -608,9 +620,11 @@ function drawLetterPointsGrid() {
           }
         }
         
+        // Visual: opacidade e tamanho baseados no som
+        const opacity = amplifiedMid > 0.1 ? 40 + amplifiedMid * 50 : 30;
         const size = amplifiedMid > 0.1 ? 3 + amplifiedMid * 3 : 2;
         
-        fill(darkMode ? 0 : 255);
+        fill(0, 0, maxBrightness, opacity);
         noStroke();
         ellipse(p.pos.x, p.pos.y, size, size);
         break;
@@ -659,7 +673,7 @@ function drawLetterPointsGrid() {
           const waveIntensity = Math.abs(waveAmplitude) / 40;
           const opacity = 40 + waveIntensity * 50;
           
-          fill(darkMode ? 0 : 255);
+          fill(0, 0, maxBrightness, opacity);
           noStroke();
           ellipse(p.pos.x, p.pos.y, 3 + waveIntensity * 4, 3 + waveIntensity * 4);
 
@@ -690,6 +704,8 @@ function drawLetterPointsGrid() {
           const x2 = centerX - cos(angle) * finalLength;
           const y2 = centerY - sin(angle) * finalLength;
 
+          // Propriedades visuais
+          const opacity = 40 + amplifiedTreble * 50;
           let strokeW = 0.8 + amplifiedTreble * 3;
 
           // Resposta ao spectrum
@@ -698,14 +714,14 @@ function drawLetterPointsGrid() {
             strokeW *= (1 + freqValue * 2);
           }
 
-          stroke(darkMode ? 0 : 255);
+          stroke(darkMode ? 255 : 0, 0, opacity);
           strokeWeight(strokeW);
           line(x1, y1, x2, y2);
 
           // Efeito glow para picos
           if (peakDetector.peakCount > 0 && amplifiedTreble > 0.5) {
             strokeWeight(strokeW * 2);
-            stroke(darkMode ? 0 : 255);
+            stroke(darkMode ? 255 : 0, 0, opacity * 0.3);
             line(x1, y1, x2, y2);
           }
         }
@@ -731,17 +747,24 @@ function drawLetterPointsGrid() {
 
           // Propriedades visuais
           const combinedAudio = (amplifiedBass + amplifiedMid + amplifiedTreble) / 3;
+          const orgBrightness = map(combinedAudio, 0, 1, minBrightness, maxBrightness);
           const orgAlpha = 50 + combinedAudio * 40;
           const orgSize = (p.size || 3) * (1 + combinedAudio * 2.5);
 
-          fill(darkMode ? 0 : 255);
+          fill(baseHue, baseSaturation, orgBrightness, orgAlpha);
 
           // Stroke para picos de áudio
           if (amplifiedMic > 0.6) {
-            stroke(darkMode ? 0 : 30);
+            stroke(baseHue, baseSaturation, min(orgBrightness + 30, maxBrightness));
             strokeWeight(0.3 + amplifiedMic * 0.7);
           } else {
             noStroke();
+          }
+
+          // Glow para energia alta
+          if (combinedAudio > 0.6) {
+            drawingContext.shadowBlur = amplifiedMic * 10;
+            drawingContext.shadowColor = color(baseHue, baseSaturation, orgBrightness);
           }
 
           ellipse(orgX, orgY, orgSize, orgSize);

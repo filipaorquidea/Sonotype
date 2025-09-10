@@ -724,14 +724,12 @@ function updateSegmentControlsLayout() {
         const labelElement = checkbox.elt.querySelector('label');
         
         if (checkboxElement) {
-          checkboxElement.style.borderColor = 'rgba(0, 0, 0, 0.6)';
-          checkboxElement.style.backgroundColor = 'rgba(255, 255, 255, 0.9)';
-          checkboxElement.style.accentColor = '#000000';
+          checkboxElement.style.borderColor = darkMode ? 'rgba(0, 0, 0, 0.6)' : 'rgba(255, 255, 255, 0.6)';
+          checkboxElement.style.backgroundColor = 'transparent';
+          
           if (checkboxElement.checked) {
-            checkboxElement.style.backgroundColor = 'rgba(255, 255, 255, 1)';
-            checkboxElement.style.borderColor = 'rgba(0, 0, 0, 0.9)';
-            checkboxElement.style.boxShadow = '0 0 0 2px rgba(0,0,0,0.12)';
-            checkboxElement.style.accentColor = '#000000';
+            checkboxElement.style.backgroundColor = darkMode ? 'rgba(0, 0, 0, 0.8)' : 'rgba(255, 255, 255, 0.8)';
+            checkboxElement.style.borderColor = darkMode ? 'rgba(0, 0, 0, 0.9)' : 'rgba(255, 255, 255, 0.9)';
           }
         }
         
@@ -1174,10 +1172,7 @@ function setupParticleControls() {
   particleDensityLabel.style('color', darkMode ? '#000000' : '#FFFFFF');
 
   // Slider densidade
-  const minSlider = 5, maxSlider = 20;
-  const defaultSlider = Math.round((minSlider + maxSlider) / 2 + 1);
-  particleDensitySlider = createSlider(minSlider, maxSlider, defaultSlider, 1);
-  particleDensity = defaultSlider;
+  particleDensitySlider = createSlider(5, 20, particleDensity, 1);
   particleDensitySlider.style('appearance', 'none');
   particleDensitySlider.style('-webkit-appearance', 'none');
   particleDensitySlider.style('height', '5px');
@@ -1187,8 +1182,7 @@ function setupParticleControls() {
   particleDensitySlider.style('opacity', '0.9');
 
   particleDensitySlider.input(() => {
-  particleDensity = particleDensitySlider.value();
-  window.gridDensity = particleDensity;
+    particleDensity = particleDensitySlider.value();
     particleDensityLabel.html('Particle Density');
     createMixedLetterPoints();
   });
@@ -1546,11 +1540,11 @@ function informations() {
   infoBox.id('info-box');
   infoBox.position(width / 2 - 360, height / 2 - 240);
   infoBox.size(700, 460);
-  infoBox.style('background', darkMode ? 'rgba(0,0,0,0.85)' : 'rgba(255,255,255,0.85)');
+  infoBox.style('background', darkMode ? 'rgba(0,0,0,0.85)' : 'rgba(255,255,255,0.55)');
   infoBox.style('border-radius', '10px');
   infoBox.style('box-shadow', '0 4px 24px rgba(0,0,0,0.15)');
   infoBox.style('padding', '32px');
-  infoBox.style('color', darkMode ? '#FFFFFF' : '#000000');
+  infoBox.style('color', darkMode ? '#000000' : '#FFFFFF');
   infoBox.style('font-size', '18px');
   infoBox.style('z-index', '1000');
   infoBox.style('display', 'flex');
@@ -1567,7 +1561,7 @@ function informations() {
   closeBtn.style('top', '12px');
   closeBtn.style('right', '18px');
   closeBtn.style('font-size', '28px');
-  closeBtn.style('color', darkMode ? '#FFFFFF' : '#000000');
+  closeBtn.style('color', darkMode ? '#000000' : '#FFFFFF');
   closeBtn.style('cursor', 'pointer');
   closeBtn.style('opacity', '0.7');
   closeBtn.mousePressed(() => { 
@@ -1575,13 +1569,12 @@ function informations() {
     infoBox.remove(); 
   });
 
-  let html = `<b>Informações do Sistema Sonotype</b>
-  <p>Este sistema é uma exploração de tipografia, onde cada letra é composta por partículas que se comportam de maneira dinâmica e interativa.</p>
-  <p>Existem 2 fontes distintas que irão ser demonstradas à medida que for escrevendo, também existem botões e outras interações disponíveis.</p>
-  <p>Pode aumentar ou diminuir o número de partículas na fontes, dar shuffle na posição de animações, remover alguma animação das letras, congelar o estado atual,
-  ver valores de áudio e as linhas de anatomia da letra e ainda exportar em diferentes formatos.</p>
-  <p> Existe ainda um modo de exibição para usar em instalações interativas.</p>
-  <p>Explore o que este sistema tem para oferecer!</p>
+  let html = `<b>Informações do Sistema Typeface</b>
+  <p>Este sistema é uma exploração de tipografia generativa, onde cada letra é composta por partículas que se comportam de maneira dinâmica e interativa.</p>
+  <p>As partículas são agrupadas em segmentos, cada um com o seu próprio comportamento e animação. É possível alternar a visibilidade dos segmentos, randomizar os seus comportamentos e até
+  interagir com eles usando a câmera.</p>
+  <p>O sistema também permite exportar as fontes em diferentes formatos, como OTF, GIF e vídeo.</p>
+  <p>Use os controles na parte inferior para ajustar a densidade das partículas, ativar/desativar modos de instalação e exibição, e alternar entre modos de exibição.</p>
   `;
   infoBox.html(html);
   // Garante que o botão de fechar fica acima do conteúdo
